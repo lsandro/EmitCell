@@ -13,4 +13,6 @@
 @property(nonatomic,copy)NSArray *timeArr;
 @property(nonatomic,strong)NSMutableArray *trueArr;
 
+
+- (IBAction)reloadAc:(id)sender;
 @end

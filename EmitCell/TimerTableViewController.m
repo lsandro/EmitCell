@@ -14,6 +14,7 @@
 @interface TimerTableViewController (){
     NSString *zongTimeStr;
     NSMutableArray *modelArr;
+    BOOL Done;//判断是否是第一次启动runloop
 }
 
 @end
@@ -25,6 +26,7 @@
     _timeArr = @[@55555,@44444,@33333,@22222,@11111,@66666];
     _trueArr = [_timeArr mutableCopy];
 
+    Done = NO;
     NSLog(@"tttt-%@",_trueArr);
     
     
@@ -65,14 +67,23 @@
     NSString *rowStr = [NSString stringWithFormat:@"%ld",indexPath.row];
     
     cell.textLabel.text = [NSString stringWithFormat:@"%@---%@",_trueArr[indexPath.row],@"倒计时"];
-
+    //NSRunLoop *loop = [NSRunLoop currentRunLoop];
     dispatch_queue_t queue = dispatch_queue_create("tk.bourne.testQueue", DISPATCH_QUEUE_CONCURRENT);//DISPATCH_QUEUE_SERIAL  DISPATCH_QUEUE_CONCURRENT
     dispatch_async(queue, ^{
         //code here
         
+        
         [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timerFireMethod:) userInfo:rowStr repeats:YES];
         NSLog(@"%@", [NSThread currentThread]);
-        [[NSRunLoop currentRunLoop] run];
+        while (!Done)
+        {
+            [[NSRunLoop currentRunLoop] run];
+            
+           // BOOL ret = [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+           //                                     beforeDate:[NSDate distantFuture]];
+           // NSLog(@"exiting runloop.........: %d", ret);
+        }
+        
     });
      
     
@@ -181,4 +192,9 @@
 }
 */
 
+- (IBAction)reloadAc:(id)sender {
+    Done = YES;
+    //CFRunLoopStop([NSRunLoop currentRunLoop].getCFRunLoop);
+    [self.tableView reloadData];
+}
 @end
